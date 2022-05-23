@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <style>
+        *{margin: 0;
+         padding: 0;
+        }
+
+        .db{
+           
+            display: none;
+        }
+        img{
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <input type="file" id="uploadImg">
+    <img src="" alt=""  id="img"  class="db">
+  <div>  用户名：<input type="text" id="username"></div>
+  <div>    密码：<input type="text"  id="password"> </div>
+  <input type="button" name=""  value="注册"  id="register">
+    <script>
+  $("#uploadImg").change(function(){
+       
+    const file=$("#uploadImg")[0].files[0];
+    const formdata=new  FormData();
+    formdata.append("avatar",file);
+    $.ajax({
+
+        url:"/upload",
+        data:formdata,
+        type:"post",
+        contentType:false,
+        processData:false,
+        success:(res)=>
+
+        {
+            console.log(res);//这里会返回一个json类型的数据给服务端
+            if(res.code==200)
+            {
+                $("#img").removeClass("db").attr("src","http://localhost:8888/"+res.path);
+                console.log(res.path);
+
+            }
+        }
+    })
+
+
+
+  });
+  $("#register").click(function(){
+
+
+    const  username=$("#username").val();
+    const password=$("#password").val();
+    const imgurl=$("#img").attr("src");
+    console.log($("#username").val());
+    $.post("/doreg",{imgurl,username,password}).then((res)=>
+    {
+        console.log(res);
+        if(res.code==200)
+        {
+            location.href="./login";
+        }else
+        {
+            location.reload();
+        }
+    })
+
+  })
+
+    </script>
+    
+</body>
+</html>
